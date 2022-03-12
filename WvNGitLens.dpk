@@ -1,0 +1,46 @@
+﻿package WvNGitLens;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'WvNGitLens - Inline evaluation plugin'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  designide;
+
+contains
+  WvN.GitLens in 'WvN.GitLens.pas',
+  WvN.GitLens.CPUID in 'detours\WvN.GitLens.CPUID.pas',
+  WvN.GitLens.DDetours in 'detours\WvN.GitLens.DDetours.pas',
+  WvN.GitLens.InstDecode in 'detours\WvN.GitLens.InstDecode.pas',
+  WvN.GitLens.Options.Frame in 'WvN.GitLens.Options.Frame.pas' {OptionsFrame},
+  WvN.GitLens.Utils in 'WvN.GitLens.Utils.pas',
+  WvN.GitLens.Options in 'WvN.GitLens.Options.pas',
+  WvN.GitLens.Theme in 'WvN.GitLens.Theme.pas';
+
+end.
