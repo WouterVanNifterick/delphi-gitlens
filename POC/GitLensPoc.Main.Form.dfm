@@ -1,9 +1,9 @@
-object Form2: TForm2
+object frmMain: TfrmMain
   Left = 0
   Top = 0
-  Caption = 'Form2'
-  ClientHeight = 424
-  ClientWidth = 618
+  Caption = 'Git Lens Test'
+  ClientHeight = 888
+  ClientWidth = 1201
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,13 +13,24 @@ object Form2: TForm2
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
-  object Memo1: TMemo
-    Left = 16
-    Top = 24
-    Width = 497
-    Height = 265
-    Lines.Strings = (
-      'Memo1')
+  object ListView1: TListView
+    Left = 0
+    Top = 0
+    Width = 1201
+    Height = 888
+    Align = alClient
+    Columns = <
+      item
+      end
+      item
+        Width = 300
+      end
+      item
+        AutoSize = True
+      end>
+    OwnerData = True
     TabOrder = 0
+    ViewStyle = vsReport
+    OnData = ListView1Data
   end
 end
