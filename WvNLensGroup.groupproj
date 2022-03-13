@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{E595420D-5CC7-45FA-A725-9D6AF6FF7AA7}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="WvNGitLens.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="POC\GitLensPOC.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="WvNGitLens">
+        <MSBuild Projects="WvNGitLens.dproj"/>
+    </Target>
+    <Target Name="WvNGitLens:Clean">
+        <MSBuild Projects="WvNGitLens.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WvNGitLens:Make">
+        <MSBuild Projects="WvNGitLens.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GitLensPOC">
+        <MSBuild Projects="POC\GitLensPOC.dproj"/>
+    </Target>
+    <Target Name="GitLensPOC:Clean">
+        <MSBuild Projects="POC\GitLensPOC.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GitLensPOC:Make">
+        <MSBuild Projects="POC\GitLensPOC.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="WvNGitLens;GitLensPOC"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="WvNGitLens:Clean;GitLensPOC:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="WvNGitLens:Make;GitLensPOC:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
