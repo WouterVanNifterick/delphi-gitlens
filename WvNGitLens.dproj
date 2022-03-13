@@ -107,9 +107,6 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="designide.dcp"/>
         <DCCReference Include="WvN.GitLens.pas"/>
-        <DCCReference Include="detours\WvN.GitLens.CPUID.pas"/>
-        <DCCReference Include="detours\WvN.GitLens.DDetours.pas"/>
-        <DCCReference Include="detours\WvN.GitLens.InstDecode.pas"/>
         <DCCReference Include="WvN.GitLens.Options.Frame.pas">
             <Form>OptionsFrame</Form>
         </DCCReference>

@@ -35,9 +35,6 @@ requires
 
 contains
   WvN.GitLens in 'WvN.GitLens.pas',
-  WvN.GitLens.CPUID in 'detours\WvN.GitLens.CPUID.pas',
-  WvN.GitLens.DDetours in 'detours\WvN.GitLens.DDetours.pas',
-  WvN.GitLens.InstDecode in 'detours\WvN.GitLens.InstDecode.pas',
   WvN.GitLens.Options.Frame in 'WvN.GitLens.Options.Frame.pas' {OptionsFrame},
   WvN.GitLens.Utils in 'WvN.GitLens.Utils.pas',
   WvN.GitLens.Options in 'WvN.GitLens.Options.pas',
