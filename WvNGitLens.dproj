@@ -110,9 +110,16 @@
         <DCCReference Include="WvN.GitLens.Options.Frame.pas">
             <Form>OptionsFrame</Form>
         </DCCReference>
-        <DCCReference Include="WvN.GitLens.Utils.pas"/>
         <DCCReference Include="WvN.GitLens.Options.pas"/>
         <DCCReference Include="WvN.GitLens.Theme.pas"/>
+        <DCCReference Include="WvN.GitLens.Console.Capture.pas"/>
+        <DCCReference Include="WvN.GitLens.Utils.pas"/>
+        <DCCReference Include="git\models\WvN.GitLens.Git.Blame.pas"/>
+        <DCCReference Include="git\models\WvN.GitLens.Git.Commit.pas"/>
+        <DCCReference Include="git\models\WvN.GitLens.Git.Author.pas"/>
+        <DCCReference Include="git\models\WvN.GitLens.Git.RemoteProvider.pas"/>
+        <DCCReference Include="git\parsers\WvN.GitLens.Git.BlameParser.pas"/>
+        <DCCReference Include="git\models\WvN.GitLens.Git.User.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -857,10 +864,10 @@
                 </DeployClass>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>

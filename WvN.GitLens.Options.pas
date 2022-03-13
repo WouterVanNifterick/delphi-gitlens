@@ -6,13 +6,12 @@ uses
   Vcl.Forms,
   ToolsAPI,
   WvN.GitLens.Options.Frame,
-  WvN.GitLens.Utils,
   WvN.GitLens.Theme,
   System.SysUtils,
   System.UITypes;
 
 type
-  TDLightAddInOptions = class(TInterfacedObject, INTAAddInOptions)
+  TWvNGitLensAddInOptions = class(TInterfacedObject, INTAAddInOptions)
   private
     FFrame: TOptionsFrame;
   public
@@ -29,57 +28,57 @@ type
 
 implementation
 
-{ TDLightAddInOptions }
+{ TWvNGitLensAddInOptions }
 
 uses
   System.IniFiles, System.Rtti;
 
-procedure TDLightAddInOptions.DialogClosed(Accepted: Boolean);
+procedure TWvNGitLensAddInOptions.DialogClosed(Accepted: Boolean);
 begin
   if Accepted then
   begin
-    DLightTheme := FFrame.Theme;
-    DLightTheme.SaveToFile;
+    WvNGitLensTheme := FFrame.Theme;
+    WvNGitLensTheme.SaveToFile;
     OnPaint;
   end;
 end;
 
-procedure TDLightAddInOptions.FrameCreated(AFrame: TCustomFrame);
+procedure TWvNGitLensAddInOptions.FrameCreated(AFrame: TCustomFrame);
 begin
   FFrame := TOptionsFrame(AFrame);
-  DLightTheme.LoadFromFile;
-  FFrame.Theme := DLightTheme;
-//  FFrame.cbTextColor.Selected := DLightTheme.TextColor;
-//  FFrame.cbBackgroundColor.Selected := DLightTheme.BackgroundColor;
+  WvNGitLensTheme.LoadFromFile;
+  FFrame.Theme := WvNGitLensTheme;
+//  FFrame.cbTextColor.Selected := WvNGitLensTheme.TextColor;
+//  FFrame.cbBackgroundColor.Selected := WvNGitLensTheme.BackgroundColor;
 //  FFrame.UpdatePreview(;
 end;
 
-function TDLightAddInOptions.GetArea: string;
+function TWvNGitLensAddInOptions.GetArea: string;
 begin
-  Result := GetUIString(uisDebuggerOptions);
+  Result := 'Debugger Options';
 end;
 
-function TDLightAddInOptions.GetCaption: string;
+function TWvNGitLensAddInOptions.GetCaption: string;
 begin
-  Result := 'DLight';
+  Result := 'WvNGitLens';
 end;
 
-function TDLightAddInOptions.GetFrameClass: TCustomFrameClass;
+function TWvNGitLensAddInOptions.GetFrameClass: TCustomFrameClass;
 begin
   Result := TOptionsFrame;
 end;
 
-function TDLightAddInOptions.GetHelpContext: Integer;
+function TWvNGitLensAddInOptions.GetHelpContext: Integer;
 begin
   Result := 0;
 end;
 
-function TDLightAddInOptions.IncludeInIDEInsight: Boolean;
+function TWvNGitLensAddInOptions.IncludeInIDEInsight: Boolean;
 begin
   Result := True;
 end;
 
-function TDLightAddInOptions.ValidateContents: Boolean;
+function TWvNGitLensAddInOptions.ValidateContents: Boolean;
 begin
   Result := True;
 end;

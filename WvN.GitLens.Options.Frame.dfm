@@ -5,13 +5,4 @@ object OptionsFrame: TOptionsFrame
   Height = 586
   TabOrder = 0
   PixelsPerInch = 96
-  object Memo1: TMemo
-    Left = 16
-    Top = 448
-    Width = 185
-    Height = 89
-    Lines.Strings = (
-      'Memo1')
-    TabOrder = 0
-  end
 end

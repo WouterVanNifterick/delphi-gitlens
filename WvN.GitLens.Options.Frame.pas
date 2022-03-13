@@ -9,14 +9,13 @@ uses
 
 type
   TOptionsFrame = class(TFrame)
-    Memo1: TMemo;
   private
-    FTheme: TDLightTheme;
+    FTheme: TWvNGitLensTheme;
     procedure ChangeColor(Sender: TObject);
-    procedure SetTheme(const Value: TDLightTheme);
+    procedure SetTheme(const Value: TWvNGitLensTheme);
     procedure ShowTheme;
   public
-    property Theme:TDLightTheme read FTheme write SetTheme;
+    property Theme:TWvNGitLensTheme read FTheme write SetTheme;
     procedure CreateEditor(Name:string; Value:TColor; RowNum:Integer);
     constructor Create(AOwner: TComponent); override;
   end;
@@ -31,19 +30,8 @@ procedure TOptionsFrame.ChangeColor(Sender: TObject);
 begin
   if not (Sender is TColorBox) then Exit;
   var colbox := Sender as TColorBox;
-
-  var pnl := colbox.GetParentComponent;
-  if not (pnl is TPanel) then Exit;
-
-  var preview := pnl.Components[2] as TPanel;
-  if not (preview is TPanel) then Exit;
-
-  preview.Font.Color := colBox.Selected;
-  preview.Color := Theme.BackgroundColor;
-
-  var field := TRTTIContext.Create.GetType(TypeInfo(TDlightTheme)).GetField(colBox.Name);
+  var field := TRTTIContext.Create.GetType(TypeInfo(TWvNGitLensTheme)).GetField(colBox.Name);
   if field=nil then exit;
-
   field.SetValue(@Theme, colBox.Selected);
 end;
 
@@ -89,22 +77,9 @@ begin
     ColBox.Selected := Value;
     ColBox.Show;
 
-    var pnl := TPanel.Create(row);
-    pnl.Parent := row;
-    pnl.Left := 8 + ColBox.Left + ColBox.Width;
-    pnl.Top := 3;
-    pnl.Color := FTheme.BackgroundColor;
-    pnl.Font.Color := Value;
-    pnl.Width := 150;
-    pnl.Height := 22;
-    pnl.BevelOuter := bvLowered;
-    pnl.Caption := 'I=12345';
-    pnl.ParentBackground := False;
-
-    Memo1.Lines.Add(Name+ ' ' + ColorToString(Value));
 end;
 
-procedure TOptionsFrame.SetTheme(const Value: TDLightTheme);
+procedure TOptionsFrame.SetTheme(const Value: TWvNGitLensTheme);
 begin
   FTheme := Value;
   ShowTheme;
@@ -113,7 +88,7 @@ end;
 procedure TOptionsFrame.ShowTheme;
 begin
   var i := 0;
-  for var field in TRTTIContext.Create.GetType(TypeInfo(TDlightTheme)).GetFields do
+  for var field in TRTTIContext.Create.GetType(TypeInfo(TWvNGitLensTheme)).GetFields do
   begin
     CreateEditor(field.Name, Field.GetValue( @FTheme ).AsInt64, i);
     Inc(i);

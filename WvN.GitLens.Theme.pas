@@ -6,7 +6,7 @@ uses
   System.UITypes, System.IniFiles, System.Rtti, System.SysUtils;
 
 type
-  TDlightTheme = record
+  TWvNGitLensTheme = record
     TextColor:TColor;
     BackgroundColor:TColor;
     StringColor:TColor;
@@ -20,7 +20,7 @@ type
   end;
 
 var
-  DLightTheme:TDlightTheme;
+  WvNGitLensTheme:TWvNGitLensTheme;
 
 
 implementation
@@ -28,7 +28,7 @@ implementation
 
 { TOptions }
 
-function TDlightTheme.DetectColor(const Text: string): TColor;
+function TWvNGitLensTheme.DetectColor(const Text: string): TColor;
 begin
   Result := TextColor;
   var v:Int64;
@@ -42,22 +42,22 @@ begin
   else if TryStrToDateTime(Text, d) then Result := DateTimeColor;
 end;
 
-procedure TDlightTheme.LoadFromFile;
+procedure TWvNGitLensTheme.LoadFromFile;
 begin
   var ini := TIniFile.Create(ChangeFileExt(GetModuleName(HInstance), '.ini'));
   try
-    for var field in TRTTIContext.Create.GetType(TypeInfo(TDlightTheme)).GetFields do
+    for var field in TRTTIContext.Create.GetType(TypeInfo(TWvNGitLensTheme)).GetFields do
       field.SetValue(@self, ini.ReadInt64('Colors', field.Name, TColorRec.Lightgray ));
   finally
     ini.Free;
   end;
 end;
 
-procedure TDlightTheme.SaveToFile;
+procedure TWvNGitLensTheme.SaveToFile;
 begin
   var ini := TIniFile.Create(ChangeFileExt(GetModuleName(HInstance), '.ini'));
   try
-    for var field in TRTTIContext.Create.GetType(TypeInfo(TDlightTheme)).GetFields do
+    for var field in TRTTIContext.Create.GetType(TypeInfo(TWvNGitLensTheme)).GetFields do
       ini.WriteInt64('Colors', field.Name, field.GetValue(@self).AsInt64);
   finally
     ini.Free;
@@ -66,7 +66,7 @@ end;
 
 
 initialization
-  DLightTheme.LoadFromFile;
+  WvNGitLensTheme.LoadFromFile;
 
 finalization
 

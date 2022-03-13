@@ -36,8 +36,15 @@ requires
 contains
   WvN.GitLens in 'WvN.GitLens.pas',
   WvN.GitLens.Options.Frame in 'WvN.GitLens.Options.Frame.pas' {OptionsFrame},
-  WvN.GitLens.Utils in 'WvN.GitLens.Utils.pas',
   WvN.GitLens.Options in 'WvN.GitLens.Options.pas',
-  WvN.GitLens.Theme in 'WvN.GitLens.Theme.pas';
+  WvN.GitLens.Theme in 'WvN.GitLens.Theme.pas',
+  WvN.GitLens.Console.Capture in 'WvN.GitLens.Console.Capture.pas',
+  WvN.GitLens.Utils in 'WvN.GitLens.Utils.pas',
+  WvN.GitLens.Git.Blame in 'git\models\WvN.GitLens.Git.Blame.pas',
+  WvN.GitLens.Git.Commit in 'git\models\WvN.GitLens.Git.Commit.pas',
+  WvN.GitLens.Git.Author in 'git\models\WvN.GitLens.Git.Author.pas',
+  WvN.GitLens.Git.RemoteProvider in 'git\models\WvN.GitLens.Git.RemoteProvider.pas',
+  WvN.GitLens.Git.BlameParser in 'git\parsers\WvN.GitLens.Git.BlameParser.pas',
+  WvN.GitLens.Git.User in 'git\models\WvN.GitLens.Git.User.pas';
 
 end.

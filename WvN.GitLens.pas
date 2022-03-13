@@ -21,14 +21,20 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Classes, System.IniFiles,
   System.UITypes, System.UIConsts, System.RTLConsts, System.Rtti, System.TypInfo,
-  System.Generics.Collections, System.Generics.Defaults, Vcl.Graphics, Vcl.Forms,
-  Vcl.Controls, Vcl.ExtCtrls, Vcl.Tabs, Vcl.Menus, ToolsAPI,
+  System.Generics.Collections, System.Generics.Defaults, Vcl.Graphics,
+  Vcl.Controls, ToolsAPI,
+  WvN.GitLens.Console.Capture,
+  WvN.GitLens.Git.Blame,
+  WvN.GitLens.Git.BlameParser,
+  WvN.GitLens.Git.User,
   WvN.GitLens.Options,
   WvN.GitLens.Options.Frame,
-  WvN.GitLens.DDetours,
-  WvN.GitLens.Utils;
+  WvN.GitLens.Utils
+;
 
 type
+
+
   TIDENotifier = class(TNotifierObject, IOTAIDENotifier)
   private
     FEditorNotifiers: TList<IOTAEditorNotifier>;
@@ -80,14 +86,14 @@ type
   end;
 
 var
+  FCurrentFile:string;
   FWvNGitLensEnabled: Boolean;
   FIDENotifierIndex: Integer = -1;
-  FDLightAddInOptions: TDLightAddInOptions = nil;
+  FWvNGitLensAddInOptions: TWvNGitLensAddInOptions = nil;
   FCurrentBuffer: IOTAEditBuffer;
   FRepaintAll: Boolean;
-  FCurrentEditControl: TObject;
   FLeftGutterProp: PPropInfo;
-
+  FGitBlame:TGitBlame;
 
 { TIDENotifier }
 
@@ -123,19 +129,7 @@ end;
 
 procedure TIDENotifier.FileNotification(NotifyCode: TOTAFileNotification;
   const FileName: string; var Cancel: Boolean);
-var
-  module: IOTAModule;
-  i: Integer;
-  editor: IOTASourceEditor;
 begin
-  if NotifyCode = ofnFileOpened then
-  begin
-    module := (BorlandIDEServices as IOTAModuleServices).FindModule(FileName);
-    if not Assigned(Module) then Exit;
-    for i := 0 to module.ModuleFileCount-1 do
-      if Supports(module.ModuleFileEditors[i], IOTASourceEditor, editor) then
-        FEditorNotifiers.Add(TEditorNotifier.Create(editor));
-  end;
 end;
 
 procedure TIDENotifier.BeforeCompile(const Project: IOTAProject; var Cancel: Boolean);
@@ -183,6 +177,17 @@ end;
 
 procedure TEditorNotifier.ViewActivated(const View: IOTAEditView);
 begin
+  FCurrentFile := View.Buffer.FileName;
+  var repoPath := ExtractFilePath(FCurrentFile);
+  SetCurrentDir(repoPath);
+  CaptureConsoleOutputASync('git --no-pager blame --line-porcelain "' + FCurrentFile+'"',
+  procedure(s:string)
+  begin
+    var CurrentUser : TGitUser;
+    CurrentUser.Name  := 'Wouter van Nifterick';
+    CurrentUser.Email := 'woutervannifterck@gmail.com';
+    FGitBlame := TGitBlameParser.Parse(s, repoPath, CurrentUser);
+  end)
 end;
 
 procedure TEditorNotifier.RemoveNotifiers;
@@ -226,47 +231,42 @@ begin
 end;
 
 procedure TEditViewNotifier.BeginPaint(const View: IOTAEditView; var FullRepaint: Boolean);
-
-  function FindEditControl(AControl: TWinControl): TWinControl;
-  begin
-    if AControl.QualifiedClassName = 'EditorControl.TEditControl' then
-      Exit(AControl);
-
-    for var i := 0 to AControl.ControlCount-1 do
-    begin
-      if not (AControl.Controls[i] is TWinControl) then Continue;
-      Result := FindEditControl(TWinControl(AControl.Controls[i]));
-      if Result <> nil then Exit;
-    end;
-    Result := nil;
-  end;
-
 begin
-  FCurrentEditControl := nil;
-
-  if FRepaintAll then
-  begin
-    FullRepaint := True;
-    FRepaintAll := False;
-  end;
-
-  if FWvNGitLensEnabled and (FLeftGutterProp <> nil) then
-  begin
-    FCurrentEditControl := FindEditControl(View.GetEditWindow.Form);
-  end;
 end;
 
 
-procedure TEditViewNotifier.PaintLine(const View: IOTAEditView; LineNumber: Integer;
-  const LineText: PAnsiChar; const TextWidth: Word; const LineAttributes: TOTAAttributeArray;
+procedure TEditViewNotifier.PaintLine(
+  const View: IOTAEditView;
+  LineNumber: Integer;
+  const LineText: PAnsiChar;
+  const TextWidth: Word; const LineAttributes: TOTAAttributeArray;
   const Canvas: TCanvas; const TextRect: TRect; const LineRect: TRect; const CellSize: TSize);
 begin
-  var txt := 'This is line number '+LineNumber.ToString;
-  if FCurrentEditControl <> nil then
-    txt := FCurrentEditControl.UnitScope;
-  Canvas.Brush.Style := bsClear;
-  Canvas.Font.Color := $666666;
-  Canvas.TextOut(TextRect.Right + 30, TextRect.Top, txt);
+  if LineNumber < 1 then
+    Exit;
+
+  if LineNumber>Length(FGitBlame.lines) then
+    Exit;
+
+  if LineNumber <> View.CursorPos.Line then
+    Exit;
+
+
+  var line := FGitBlame.lines[LineNumber-1];
+  for var c in FGitBlame.commits do
+    if c.ShortSha = line.Sha then
+    begin
+      var author := c.Author.name;
+      var age := now - c.AuthorDate;
+      var ageStr := TimeSpanToShortStr(age);
+
+      var msg := c.Summary;
+
+      var txt := format('%s, %s ago • %s',[author, ageStr, msg]);
+      Canvas.Brush.Style := bsClear;
+      Canvas.Font.Color := $666666;
+      Canvas.TextOut(TextRect.Right + (CellSize.cx * 8), TextRect.Top, txt);
+    end;
 end;
 
 procedure TEditViewNotifier.EndPaint(const View: IOTAEditView);
@@ -283,32 +283,17 @@ begin
   end;
 end;
 
-procedure DoRepaint; forward;
-
 procedure DoRepaint;
 var
   i: Integer;
 begin
   FRepaintAll := True;
   if FCurrentBuffer <> nil then
-  begin
     for i := 0 to FCurrentBuffer.EditViewCount-1 do
       FCurrentBuffer.EditViews[i].Paint;
-  end;
 end;
 
 procedure Register;
-type
-  TTimerProc = procedure(Self: TTimer; Sender: TObject);
-
-  function CreateTimer(Interval: Integer; OnTimer: TTimerProc): TTimer;
-  begin
-    Result := TTimer.Create(nil);
-    Result.Enabled := False;
-    Result.Interval := Interval;
-    Result.OnTimer := TNotifyEvent(CreateMethod(Result, @OnTimer));
-  end;
-
   function GetPropInfo(const QualifiedClassName, PropName: string): PPropInfo;
   var
     ctx: TRttiContext;
@@ -324,13 +309,15 @@ type
 
 begin
   FIDENotifierIndex := (BorlandIDEServices as IOTAServices).AddNotifier(TIDENotifier.Create);
-  FDLightAddInOptions := TDLightAddInOptions.Create;
-  FDLightAddinOptions.OnPaint := procedure
-                                 begin
-                                   if FWvNGitLensEnabled then
-                                     DoRepaint;
-                                 end;
-  (BorlandIDEServices as INTAEnvironmentOptionsServices).RegisterAddInOptions(FDLightAddInOptions);
+  FWvNGitLensAddInOptions := TWvNGitLensAddInOptions.Create;
+  FWvNGitLensAddinOptions.OnPaint :=
+    procedure
+    begin
+      if FWvNGitLensEnabled then
+        DoRepaint;
+    end;
+
+  (BorlandIDEServices as INTAEnvironmentOptionsServices).RegisterAddInOptions(FWvNGitLensAddInOptions);
 
   FLeftGutterProp := GetPropInfo('EditorControl.TEditControl', 'LeftGutter');
 
@@ -340,8 +327,8 @@ procedure Unregister;
 begin
   if FIDENotifierIndex >= 0 then
     (BorlandIDEServices as IOTAServices).RemoveNotifier(FIDENotifierIndex);
-  (BorlandIDEServices as INTAEnvironmentOptionsServices).UnregisterAddInOptions(FDLightAddInOptions);
-  FDLightAddInOptions := nil;
+  (BorlandIDEServices as INTAEnvironmentOptionsServices).UnregisterAddInOptions(FWvNGitLensAddInOptions);
+  FWvNGitLensAddInOptions := nil;
 end;
 
 initialization
